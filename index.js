@@ -14,9 +14,21 @@ app.get("/", function (req, res) {
 });
 
 // timestamp api
-app.get("/api/hello", function (req, res) {
-  res.json({"unix": moment().startOf("day").unix(),
-  "utc": new Date()});
+app.get("/api/:date", function (req, res) {
+  let unixTimestamp = moment(req.params.date);
+  res.json({"unix": unixTimestamp.startOf("day").unix(),
+  "utc": unixTimestamp.format("ddd, DD MMM YYYY HH:mm:ss [GMT]")});
+});
+
+app.get('/api/unix/:unix', (req, res) => {
+  try {
+    let unixTimestamp = parseInt(req.params.unix);
+    res.json({"unix": unixTimestamp,
+        "utc": moment.unix(unixTimestamp)
+        .format('ddd, DD MMM YYYY HH:mm:ss [GMT]')});
+  } catch (error) {
+    res.status(400).json({"error": "O código Unix fornecido é inválido!"});
+  }
 });
 
 
